@@ -20,9 +20,12 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", inline: <<-SHELL
     yum update -y
-    yum install -y yum-utils device-mapper-persistent-data lvm2
     yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    yum install -y docker-ce gcc git vim make
+    yum install -y docker-ce gcc git vim make vim gdb strace ltrace
+    systemctl enable docker --now
+    usermod -aG docker vagrant
+    echo '{"debug": true}' >> /etc/docker/daemon.json
+    systemctl restart docker
     cd /tmp
     curl https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz -o go1.13.6.linux-amd64.tar.gz
     tar -C /usr/local/ -zxf /tmp/go1.13.6.linux-amd64.tar.gz && rm /tmp/go1.13.6.linux-amd64.tar.gz
